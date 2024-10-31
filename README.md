@@ -2,7 +2,7 @@
 
 ## Needed files:
 
-### L. major genome
+### 1) L. major genome
 
 We'll get the data from [TryTrypDB](https://tritrypdb.org/tritrypdb/app/record/dataset/NCBITAXON_347515), based on the
 primary publication of [Ivens et al. (2005)](https://pubmed.ncbi.nlm.nih.gov/16020728/).
@@ -16,7 +16,7 @@ Information about [_L. major_ file](./data/TriTrypDB-68_LmajorFriedlin_Genome.fa
 
 Following this [table](./md_notes/L_major_release.md), seems there were no modification to the genome fasta file, only the annotation
 
-### Hallmark 79 from T. brucei ingi/RIME
+### 2) Hallmark 79 from T. brucei ingi/RIME
 
 >ingi_1 Trypanosoma brucei ingi element
 CCCTGGCGATGCCGGCCACCTCAACGTGGTGCCAGGGTCCAGTACCCCGTATCATCGGGG
@@ -24,6 +24,6 @@ GAAGCCAAGAGCCAGCAGC
 
 Which is the same as in RIME. It was obtained from Bringaud (2002)
 
-### SIDERs from Bringaud to compare
+### 3) SIDERs from Bringaud to compare
 
 The [SIDERs list from Bringaud](./data/Bringaud_SIDERs.pdf)
