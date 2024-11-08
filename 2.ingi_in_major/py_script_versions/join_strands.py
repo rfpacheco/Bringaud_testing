@@ -48,10 +48,10 @@ def blastn_dic(path_input: str, path_output: str) -> Optional[None]:
 
 def main(df_path: str, genome_fasta_path: str, example_strand: str) -> NoReturn:
     """
-    :param df_path: Path to the CSV file containing genomic data.
+    :param df_path: Path to the CSV file containing genomic 0.data.
     :param genome_fasta_path: Path to the genome FASTA file used for sequence extraction.
     :param example_strand: Strand information for sequence extraction.
-    :return: The function does not return any value. It processes the genomic data, merges strands using BEDOPS, extracts sequences, and writes the merged sequences to a CSV file.
+    :return: The function does not return any value. It processes the genomic 0.data, merges strands using BEDOPS, extracts sequences, and writes the merged sequences to a CSV file.
     """
     df_path = os.path.expanduser(df_path)
     df = pd.read_csv(df_path, sep=',', header=0)
@@ -89,8 +89,8 @@ def main(df_path: str, genome_fasta_path: str, example_strand: str) -> NoReturn:
         os.system(f"rm -rf {bedops_folder_path}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process some genomic data.")
-    parser.add_argument("df_path", type=str, help="Path to the CSV file containing the data.")
+    parser = argparse.ArgumentParser(description="Process some genomic 0.data.")
+    parser.add_argument("df_path", type=str, help="Path to the CSV file containing the 0.data.")
     parser.add_argument("genome_fasta_path", type=str, help="Path to the genome FASTA file.")
     parser.add_argument("example_strand", type=str, help="Strand to use (plus or minus).")
 

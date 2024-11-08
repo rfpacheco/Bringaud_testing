@@ -26,8 +26,8 @@ def save_dataframe_to_csv(df, csv_path):
 
 
 def main():
-    pdf_path = '../data/Bringaud_SIDERs.pdf'
-    csv_path = '../data/bringaud_siders.csv'
+    pdf_path = '../0.0.data/Bringaud_SIDERs.pdf'
+    csv_path = '../0.0.data/bringaud_siders.csv'
 
     text = extract_text_from_all_pages_with_layout(pdf_path)
     df = text_to_dataframe(text)
