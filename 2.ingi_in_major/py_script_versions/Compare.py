@@ -46,7 +46,7 @@ def compare_sequences(df_group1: DataFrameGroupBy, df_group2: DataFrameGroupBy,
     not_captured_df = pd.DataFrame()
 
     for (name1, group1), (name2, group2) in zip(df_group1, df_group2):
-        # group1 should be True Positive 0.data
+        # group1 should be True Positive 0.1.data
         # ------------------------------------------------------------------------------
         path_chr = os.path.join(path, str(name1))
         os.makedirs(path_chr, exist_ok=True)

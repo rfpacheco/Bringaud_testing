@@ -7,7 +7,7 @@
 We'll get the data from [TryTrypDB](https://tritrypdb.org/tritrypdb/app/record/dataset/NCBITAXON_347515), based on the
 primary publication of [Ivens et al. (2005)](https://pubmed.ncbi.nlm.nih.gov/16020728/).
 
-Information about [_L. major_ file](./0.data/TriTrypDB-68_LmajorFriedlin_Genome.fasta):
+Information about [_L. major_ file](0.1.data/TriTrypDB-68_LmajorFriedlin_Genome.fasta):
 - Primary contact: Pathogen Sequencing Unit, Wellcome Sanger Institute
 - Source version(s): GCA_000002725.2, May 28, 2016, Sep 01, 2022
 - Release # / date: TriTrypDB rel. 60, 2022-NOV-09
@@ -26,4 +26,4 @@ Which is the same as in RIME. It was obtained from Bringaud (2002)
 
 ### 3) SIDERs from Bringaud to compare
 
-The [SIDERs list from Bringaud](./0.data/Bringaud_SIDERs.pdf)
+The [SIDERs list from Bringaud](0.1.data/Bringaud_SIDERs.pdf)
