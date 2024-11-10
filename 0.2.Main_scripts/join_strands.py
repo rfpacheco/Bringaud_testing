@@ -26,7 +26,7 @@ def get_data_sequence(data: pd.DataFrame, strand: str, genome_fasta: str) -> pd.
         sequences.append({
             "sseqid": chrom,
             "sstart": start,
-            "ssend": end,
+            "send": end,
             "sstrand": strand,
             "sseq": sequence
         })
