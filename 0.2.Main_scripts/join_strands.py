@@ -14,7 +14,8 @@ def get_data_sequence(data: pd.DataFrame, strand: str, genome_fasta: str) -> pd.
     :return: A pandas DataFrame with BLAST coordinates and the corresponding sequences.
     """
     sequences = []
-    for _, row in data.iterrows():
+    for index, row in data.iterrows():
+        print(f"\n\t - Getting sequence {index + 1}/{data.shape[0]}")
         chrom = row["sseqid"]
         start = row["sstart"]
         end = row["send"]
@@ -55,6 +56,7 @@ def main(df_path: str, genome_fasta_path: str, example_strand: str) -> NoReturn:
     """
     df_path = os.path.expanduser(df_path)
     df = pd.read_csv(df_path, sep=',', header=0)
+    df = df[['sseqid', 'sstart', 'send']].copy()  # take only needed files
 
     df_parent_path = os.path.dirname(df_path)
     bedops_folder_path = os.path.join(df_parent_path, "join_strands")
@@ -78,12 +80,15 @@ def main(df_path: str, genome_fasta_path: str, example_strand: str) -> NoReturn:
     os.makedirs(blast_dic_folder_path, exist_ok=True)
     blastn_dic(genome_fasta_path, blast_dic_path)
 
+    print("\nGetting data sequences:")
+    print("="*20)
     df_merged_seqs = get_data_sequence(df_merged, example_strand, blast_dic_path)
 
     # Get the parent path of 'df_path'
     parent_path = os.path.dirname(df_path)
     merged_path = os.path.join(parent_path, "merged_sequences.csv")
     df_merged_seqs.to_csv(merged_path, sep=',', header=True, index=False)
+    print(f"Saved data in: {merged_path}")
 
     if os.path.exists(bedops_folder_path):
         os.system(f"rm -rf {bedops_folder_path}")
