@@ -51,11 +51,11 @@ def compare_sequences(df_group1: DataFrameGroupBy, df_group2: DataFrameGroupBy,
         path_chr = os.path.join(path, str(name1))
         os.makedirs(path_chr, exist_ok=True)
         # ------------------------------------------------------------------------------
-        group1_total = group1[["sseq", "sseqid", "send"]].copy()
-        group2_total = group2[["sseqid", "sseqid", "send"]].copy()
+        group1_total = group1[["sseqid", "sstart", "send"]].copy()
+        group2_total = group2[["sseqid", "sstart", "send"]].copy()
         # ------------------------------------------------------------------------------
-        group1_total.sort_values(by=["sseqid", "send"], inplace=True)
-        group2_total.sort_values(by=["sseqid", "send"], inplace=True)
+        group1_total.sort_values(by=["sstart", "send"], inplace=True)
+        group2_total.sort_values(by=["sstart", "send"], inplace=True)
         # ------------------------------------------------------------------------------
         path_group1_total = os.path.join(path_chr, "group1_total.bed")
         path_group2_total = os.path.join(path_chr, "group2_total.bed")
@@ -85,8 +85,8 @@ def compare_sequences(df_group1: DataFrameGroupBy, df_group2: DataFrameGroupBy,
 
 def main():
     parser = argparse.ArgumentParser(description='Process some CSV files.')
-    parser.add_argument('--file1', type=str, required=True, help='Path to the first CSV file')
-    parser.add_argument('--file2', type=str, required=True, help='Path to the second CSV file')
+    parser.add_argument('--file1', type=str, required=True, help='Path to the software result CSV file.')
+    parser.add_argument('--file2', type=str, required=True, help='Path to the bringaud data CSV file.')
 
     args = parser.parse_args()
 
@@ -105,8 +105,11 @@ def main():
     ## Frits make a groupby
     df_1_grouped = df_1.groupby("sseqid")
     df_2_grouped = df_2.groupby("sseqid")
-    compare_dict, not_captured_df = compare_sequences(df_1_grouped, df_2_grouped, df_1, tmp_folder_path)
-    print(compare_dict)
+
+    # remember df_2 is the TP data we want to get in the result data df_1
+    compare_dict, not_captured_df = compare_sequences(df_2_grouped, df_1_grouped, df_2, tmp_folder_path)
+    for key, value in compare_dict.items():
+        print(f"{key}: {value[0]} ({value[1]}%)")
 
     # Remove all the folder `tmp_folder_path`:
     if os.path.exists(tmp_folder_path):
