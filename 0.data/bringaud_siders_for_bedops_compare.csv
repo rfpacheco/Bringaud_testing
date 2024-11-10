@@ -1,4 +1,4 @@
-chrom,start,end
+sseqid,sstart,send
 LmjF.01,39705,40532
 LmjF.01,260993,261261
 LmjF.01,266162,266340
