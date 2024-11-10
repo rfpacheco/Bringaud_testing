@@ -39,7 +39,7 @@ def recaught_blast(query_path, dict_path, perc_identity, word_size):
     recaught_df = pd.DataFrame([x.split(",") for x in recaught_df.split("\n") if x])
     recaught_df.columns = ["qseqid", "sseqid", "pident", "length", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "qlen", "slen"]
     recaught_df[['pident', 'length', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']] = recaught_df[['pident', 'length', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']].apply(pd.to_numeric)
-    return data
+    return recaught_df
 
 def fasta_creator(sequence, fasta_index, fasta_output_path):
     rec = SeqRecord(Seq(sequence),
@@ -70,7 +70,8 @@ def fasta_extractor(pathfile, outfile, extract_list):
 if __name__ == "__main__":
     args = parse_arguments()
     file_1_path = os.path.expanduser(args.file)
-    folder_path = os.path.join(file_1_path, 'true_sider_filter')
+    file_1_parent = os.path.dirname(file_1_path)
+    folder_path = os.path.join(file_1_parent, 'true_sider_filter')
     os.makedirs(folder_path, exist_ok=True)
 
     data = pd.read_csv(args.file, sep=",", header=0)
@@ -83,10 +84,10 @@ if __name__ == "__main__":
         print("="*50)
         print(f"Analyzing row {hash(index) + 1} of {data.shape[0]}")
 
-        fasta_path = os.path.join(args.output_dir, "mySequence.fasta")
+        fasta_path = os.path.join(folder_path, "mySequence.fasta")
         print(row)
         fasta_creator(row["sseq"], index, fasta_path)
-        blastn_data = blastn_blaster(fasta_path, args.dict_path, 1.0E-09, args.word_sizse)
+        blastn_data = blastn_blaster(fasta_path, args.dict_path, 1.0E-09, args.word_size)
 
         if blastn_data.count("\n") <= 1:
             not_matches[index] = True
@@ -129,10 +130,10 @@ if __name__ == "__main__":
     blastn_dic(no_data_fasta_path, no_data_fasta_path)
 
     # Search for recaught data
-    caught_data =recaught_blast(args.recaught, no_data_fasta_path, 60, args.word_size)
+    caught_data = recaught_blast(args.recaught_file, no_data_fasta_path, 60, args.word_size)
 
     # Remove ones with an evalue <= 10**-3
-    caught_data = caught_data[caught_data['evalue'] <= 1.0E-03].sort_values(by=['evalue'])
+    caught_data = caught_data[caught_data['evalue'] <= 1.0**-3].sort_values(by=['evalue'])
 
     # Create a column with the number in "sseqid"
     caught_data['index'] = caught_data['sseqid'].str.extract(r'_(\d+)_')
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     index_list = caught_data['index'].sort_values().unique().tolist()
 
     # Extract sequences from the 'no_data'
-    no_data_recaught = no_data[no_data['index'].isin(index_list)]
+    no_data_recaught = no_data[no_data.index.isin(index_list)]
 
     # Join yes_data and no_data_recaught
     final_yes_data = pd.concat([yes_data, no_data_recaught], axis=0, ignore_index=True)
@@ -152,8 +153,8 @@ if __name__ == "__main__":
     final_no_data = pd.concat([no_data, no_data_recaught]).drop_duplicates(keep=False)
 
     # Save both data:
-    final_yes_data_path = os.path.join(file_1_path, 'final_yes_data.csv')
-    final_no_data_path = os.path.join(file_1_path, 'final_no_data.csv')
+    final_yes_data_path = os.path.join(file_1_parent, 'final_yes_data.csv')
+    final_no_data_path = os.path.join(file_1_parent, 'final_no_data.csv')
     final_yes_data.to_csv(final_yes_data_path, index=False, header=True)
     final_no_data.to_csv(final_no_data_path, index=False, header=True)
 
