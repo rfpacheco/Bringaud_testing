@@ -117,7 +117,7 @@ def main():
         os.system(f"rm -rf {tmp_folder_path}")
 
     # Save the 'not_captured_df'
-    not_captured_name = f'not_captured_{args.not_name}.csv'
+    not_captured_name = f'not_captured-{args.not_name}.csv'
     not_captured_df_path = os.path.join(df_1_parent_path, not_captured_name)
     not_captured_df.to_csv(not_captured_df_path, sep=',', header=True, index=False)
 
