@@ -87,6 +87,7 @@ def main():
     parser = argparse.ArgumentParser(description='Process some CSV files.')
     parser.add_argument('--file1', type=str, required=True, help='Path to the software result CSV file.')
     parser.add_argument('--file2', type=str, required=True, help='Path to the bringaud data CSV file.')
+    parser.add_argument('--not_name', type=str, required=True, help='Name of the not captured sequences file.')
 
     args = parser.parse_args()
 
@@ -116,7 +117,8 @@ def main():
         os.system(f"rm -rf {tmp_folder_path}")
 
     # Save the 'not_captured_df'
-    not_captured_df_path = os.path.join(df_1_parent_path, "not_captured_df.csv")
+    not_captured_name = f'not_captured_{args.not_name}.csv'
+    not_captured_df_path = os.path.join(df_1_parent_path, not_captured_name)
     not_captured_df.to_csv(not_captured_df_path, sep=',', header=True, index=False)
 
 if __name__ == "__main__":
