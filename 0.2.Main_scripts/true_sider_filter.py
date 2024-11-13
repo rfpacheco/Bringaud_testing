@@ -134,6 +134,9 @@ if __name__ == "__main__":
 
     # Remove ones with an evalue <= 10**-3
     caught_data = caught_data[caught_data['evalue'] <= 1.0**-3].sort_values(by=['evalue'])
+    print("")
+    print("*"*50)
+    print(f"\nRecaught data: {caught_data.shape[0]} elements")
 
     # Create a column with the number in "sseqid"
     caught_data['index'] = caught_data['sseqid'].str.extract(r'_(\d+)_')
@@ -154,7 +157,9 @@ if __name__ == "__main__":
 
     # Save both data:
     final_yes_data_path = os.path.join(file_1_parent, 'final_yes_data.csv')
+    print(f"\n\t - Accepted data + recaught: {final_yes_data.shape[0]} elements")
     final_no_data_path = os.path.join(file_1_parent, 'final_no_data.csv')
+    print(f"\t - Rejected data - recaught: {final_no_data.shape[0]} elements")
     final_yes_data.to_csv(final_yes_data_path, index=False, header=True)
     final_no_data.to_csv(final_no_data_path, index=False, header=True)
 
