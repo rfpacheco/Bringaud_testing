@@ -37,8 +37,11 @@ def recaught_blast(query_path, dict_path, perc_identity, word_size):
         + " -outfmt '10 qseqid sseqid pident length qstart qend sstart send evalue bitscore qlen slen'"
     recaught_df = subprocess.check_output(cmd, shell=True, universal_newlines=True)  # Important the E value
     recaught_df = pd.DataFrame([x.split(",") for x in recaught_df.split("\n") if x])
-    recaught_df.columns = ["qseqid", "sseqid", "pident", "length", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "qlen", "slen"]
-    recaught_df[['pident', 'length', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']] = recaught_df[['pident', 'length', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']].apply(pd.to_numeric)
+    if not recaught_df.empty:
+        recaught_df.columns = ["qseqid", "sseqid", "pident", "length", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "qlen", "slen"]
+        recaught_df[['pident', 'length', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']] = recaught_df[['pident', 'length', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']].apply(pd.to_numeric)
+    else:
+        recaught_df = pd.DataFrame(columns=["qseqid", "sseqid", "pident", "length", "qstart", "qend", "sstart", "send", "evalue", "bitscore", "qlen", "slen"])
     return recaught_df
 
 def fasta_creator(sequence, fasta_index, fasta_output_path):
@@ -131,35 +134,42 @@ if __name__ == "__main__":
 
     # Search for recaught data
     caught_data = recaught_blast(args.recaught_file, no_data_fasta_path, 60, args.word_size)
+    if not caught_data.empty:
+        # Remove ones with an evalue <= 10**-3
+        caught_data = caught_data[caught_data['evalue'] <= 1.0**-3].sort_values(by=['evalue'])
+        print("")
+        print("*"*50)
+        print(f"\nRecaught data: {caught_data.shape[0]} elements")
 
-    # Remove ones with an evalue <= 10**-3
-    caught_data = caught_data[caught_data['evalue'] <= 1.0**-3].sort_values(by=['evalue'])
-    print("")
-    print("*"*50)
-    print(f"\nRecaught data: {caught_data.shape[0]} elements")
+        # Create a column with the number in "sseqid"
+        caught_data['index'] = caught_data['sseqid'].str.extract(r'_(\d+)_')
+        caught_data['index'] = pd.to_numeric(caught_data['index'])
 
-    # Create a column with the number in "sseqid"
-    caught_data['index'] = caught_data['sseqid'].str.extract(r'_(\d+)_')
-    caught_data['index'] = pd.to_numeric(caught_data['index'])
+        # Get a list with the index column
+        index_list = caught_data['index'].sort_values().unique().tolist()
 
-    # Get a list with the index column
-    index_list = caught_data['index'].sort_values().unique().tolist()
+        # Extract sequences from the 'no_data'
+        no_data_recaught = no_data[no_data.index.isin(index_list)]
 
-    # Extract sequences from the 'no_data'
-    no_data_recaught = no_data[no_data.index.isin(index_list)]
+        # Join yes_data and no_data_recaught
+        final_yes_data = pd.concat([yes_data, no_data_recaught], axis=0, ignore_index=True)
+        final_yes_data.sort_values(by=['sseqid', 'sstart'], inplace=True)
 
-    # Join yes_data and no_data_recaught
-    final_yes_data = pd.concat([yes_data, no_data_recaught], axis=0, ignore_index=True)
-    final_yes_data.sort_values(by=['sseqid', 'sstart'], inplace=True)
+        # Remove no_data_recaught from no data
+        final_no_data = pd.concat([no_data, no_data_recaught]).drop_duplicates(keep=False)
 
-    # Remove no_data_recaught from no data
-    final_no_data = pd.concat([no_data, no_data_recaught]).drop_duplicates(keep=False)
+        # Print results:
+        print(f"\n\t - Accepted data + recaught: {final_yes_data.shape[0]} elements")
+        print(f"\t - Rejected data - recaught: {final_no_data.shape[0]} elements")
+
+    else:
+        final_yes_data = yes_data
+        final_no_data = no_data
+        print("\n\t - No recaught data")
 
     # Save both data:
     final_yes_data_path = os.path.join(file_1_parent, 'final_yes_data.csv')
-    print(f"\n\t - Accepted data + recaught: {final_yes_data.shape[0]} elements")
     final_no_data_path = os.path.join(file_1_parent, 'final_no_data.csv')
-    print(f"\t - Rejected data - recaught: {final_no_data.shape[0]} elements")
     final_yes_data.to_csv(final_yes_data_path, index=False, header=True)
     final_no_data.to_csv(final_no_data_path, index=False, header=True)
 
